@@ -1,0 +1,28 @@
+/************************ TRICK HEADER ************************/
+/* PURPOSE: (S define file for SIM_satellite) */
+/* LIBRARY DEPENDENCIES:
+    (satellite/src/satellite_init.cpp)
+*/
+
+#include "sim_objects/default_trick_sims"
+#include "satellite/include/satellite.h"
+
+class SatelliteSimObject : public Trick::SimObject {
+public:
+    SATELLITE satellite;
+
+    SatelliteSimObject() {
+        ("initialization") satellite.satellite_init(&satellite);
+        ("default_data") satellite.satellite_default_data(&satellite);
+        ("derivative") satellite.satellite_deriv(&satellite);
+        ("integration") trick_ret = satellite.satellite_integ(&satellite);
+    }
+};
+
+SatelliteSimObject dyn;
+
+IntegLoop dyn_integloop(0.01) dyn;
+
+void create_connections() {
+    dyn_integloop.getIntegrator(Runge_Kutta_4, 0);
+}
